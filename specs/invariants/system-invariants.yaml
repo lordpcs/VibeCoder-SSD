@@ -1,0 +1,42 @@
+# ==============================================================================
+# SYSTEM INVARIANTS & QUALITY GATES
+# Rules that must deterministically hold true across all codebase changes
+# ==============================================================================
+version: "1.0.0"
+
+architectural_invariants:
+  - id: "inv-001-no-root-execution"
+    title: "Container user must remain non-root 'node'"
+    scope: ["Dockerfile", "docker-compose.yml"]
+    rule: "Container configurations must enforce user 'node' to prevent host permission issues."
+    severity: "critical"
+
+  - id: "inv-002-credential-isolation"
+    title: "No credential tokens in source repository"
+    scope: ["*"]
+    rule: "No API keys or tokens (ANTHROPIC_API_KEY, OPENAI_API_KEY, GH_TOKEN, RAILWAY_TOKEN) in tracked files. Must use .env or host mounting."
+    severity: "critical"
+
+  - id: "inv-003-sdd-contract-validity"
+    title: "All contracts must validate without warnings"
+    scope: ["specs/contracts/*"]
+    rule: "OpenAPI specs and JSON Schemas must pass schema validation check."
+    severity: "error"
+
+  - id: "inv-004-cli-backwards-compatibility"
+    title: "CLI shortcuts and tools must remain operational"
+    scope: ["bin/vibe", "vibe-shell", "verify.sh", "help.sh"]
+    rule: "The 13 CLI tools and alias shortcuts (c, cx, rw, lg, pn, b) must continue to function."
+    severity: "error"
+
+verification_pipelines:
+  pre_dispatch:
+    - name: "Validate Task JSON against task-schema.json"
+      type: "schema_check"
+    - name: "Check blast radius paths"
+      type: "path_whitelist"
+  post_execution:
+    - name: "Git diff boundary check"
+      type: "git_diff_check"
+    - name: "Run task-specific verification commands"
+      type: "shell_command"

@@ -1,0 +1,27 @@
+{
+  "task_id": "task_20260918_github_oauth",
+  "title": "Implement GitHub OAuth Authentication Route",
+  "intent_vibe": "Provide a seamless login button for GitHub, handle OAuth callback with secure JWT tokens, and store session tokens in encrypted cookies.",
+  "target_component": "agentic-orchestrator",
+  "target_spec": "specs/contracts/api-v1.yaml",
+  "affected_files": [
+    "orchestrator/backend/app/api/routes_auth.py",
+    "orchestrator/backend/app/core/security.py"
+  ],
+  "assigned_agent": "claude-code",
+  "constraints": {
+    "max_iterations": 3,
+    "strict_types": true,
+    "preserve_tests": true,
+    "timeout_seconds": 300
+  },
+  "acceptance_criteria": [
+    "GET /api/auth/github redirects to GitHub OAuth URL with state param",
+    "GET /api/auth/github/callback exchanges code for GitHub user profile",
+    "Returns signed JWT token with expiry",
+    "Unit tests cover happy path and invalid state token parameter"
+  ],
+  "verification_commands": [
+    "python bin/sdd.py lint"
+  ]
+}

@@ -1,0 +1,70 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "SDDTaskDefinition",
+  "description": "Structured task manifest for dispatching missions to AI agents within the SDD framework.",
+  "type": "object",
+  "required": [
+    "task_id",
+    "title",
+    "intent_vibe",
+    "target_component",
+    "assigned_agent",
+    "acceptance_criteria"
+  ],
+  "properties": {
+    "task_id": {
+      "type": "string",
+      "pattern": "^task_[0-9]{8}_[a-z0-9_-]+$",
+      "description": "Unique task identifier formatted as task_YYYYMMDD_slug"
+    },
+    "title": {
+      "type": "string",
+      "minLength": 5,
+      "maxLength": 120,
+      "description": "Short summary of the task"
+    },
+    "intent_vibe": {
+      "type": "string",
+      "minLength": 10,
+      "description": "Natural language developer vibe or feature concept"
+    },
+    "target_component": {
+      "type": "string",
+      "description": "Identifier of the target component in system-blueprint.yaml"
+    },
+    "target_spec": {
+      "type": "string",
+      "description": "Relative path to target contract or specification (e.g. specs/contracts/api-v1.yaml)"
+    },
+    "affected_files": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "List of paths or globs within the allowed blast radius"
+    },
+    "assigned_agent": {
+      "type": "string",
+      "enum": ["claude-code", "codex", "autonomous-subagent", "mock-runner"],
+      "default": "claude-code"
+    },
+    "constraints": {
+      "type": "object",
+      "properties": {
+        "max_iterations": { "type": "integer", "minimum": 1, "maximum": 10, "default": 3 },
+        "strict_types": { "type": "boolean", "default": true },
+        "preserve_tests": { "type": "boolean", "default": true },
+        "timeout_seconds": { "type": "integer", "default": 300 }
+      }
+    },
+    "acceptance_criteria": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "type": "string" },
+      "description": "Deterministic list of requirements the implementation must fulfill"
+    },
+    "verification_commands": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Automated shell commands to run after agent finishes to assert correctness"
+    }
+  }
+}

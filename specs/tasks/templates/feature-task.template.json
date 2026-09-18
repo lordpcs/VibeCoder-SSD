@@ -1,0 +1,25 @@
+{
+  "task_id": "task_YYYYMMDD_feature_name",
+  "title": "Short title describing the feature",
+  "intent_vibe": "Explain the intuitive feature idea, user experience, and aesthetic vibes.",
+  "target_component": "id-from-system-blueprint",
+  "target_spec": "specs/contracts/api-v1.yaml",
+  "affected_files": [
+    "src/features/feature-name/**/*"
+  ],
+  "assigned_agent": "claude-code",
+  "constraints": {
+    "max_iterations": 3,
+    "strict_types": true,
+    "preserve_tests": true,
+    "timeout_seconds": 300
+  },
+  "acceptance_criteria": [
+    "Feature fulfills core user requirements",
+    "Types and contracts strictly adhered to",
+    "No regressions in existing functionality"
+  ],
+  "verification_commands": [
+    "npm test --if-present"
+  ]
+}

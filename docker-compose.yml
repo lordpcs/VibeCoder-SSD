@@ -1,0 +1,35 @@
+services:
+  vibe-coder:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: vibe_coder_env
+    restart: unless-stopped
+    working_dir: /workspace
+    stdin_open: true
+    tty: true
+    environment:
+      # UTF-8 Locale para soporte de iconos y Nerd Fonts
+      - LANG=C.UTF-8
+      - LC_ALL=C.UTF-8
+      - HISTFILE=/workspace/.zsh_history
+    env_file:
+      - path: .env
+        required: false
+    volumes:
+      # Mapeo del directorio de trabajo actual
+      - .:/workspace
+      # Persistencia centralizada en el directorio HOME de tu Mac (~/)
+      - ~/.config/gh:/home/node/.config/gh
+      - ~/.railway:/home/node/.railway
+      - ~/.claude:/home/node/.claude
+      - ~/.claude.json:/home/node/.claude.json
+      - ~/.codex:/home/node/.codex
+    ports:
+      # Puerto para el Orquestador Agéntico y Dashboard Web
+      - "4040:4040"
+      # Puertos comunes para desarrollo web
+      - "3000:3000"
+      - "5173:5173"
+      - "8000:8000"
+      - "8080:8080"

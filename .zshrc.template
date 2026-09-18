@@ -1,0 +1,72 @@
+# Path to your Oh My Zsh installation.
+export ZSH="/home/node/.oh-my-zsh"
+
+# Soporte completo UTF-8 para iconos y Nerd Fonts
+export LANG=C.UTF-8
+export LC_ALL=C.UTF-8
+
+# Theme
+ZSH_THEME="robbyrussell"
+
+# Plugins
+plugins=(
+  zsh-autosuggestions
+  zsh-completions
+  history-substring-search
+  zsh-syntax-highlighting
+)
+
+fpath+=${ZSH_CUSTOM:-${ZSH:-/home/node/.oh-my-zsh}/custom}/plugins/zsh-completions/src
+
+# Load Oh My Zsh
+source $ZSH/oh-my-zsh.sh
+
+# Historial de comandos persistente por proyecto
+export HISTFILE=/workspace/.zsh_history
+export HISTSIZE=5000
+export SAVEHIST=5000
+setopt appendhistory
+setopt sharehistory
+setopt incappendhistory
+
+# Atajos para búsqueda rápida en el historial (Flechas arriba y abajo)
+bindkey '^[[A' history-substring-search-up
+bindkey '^[[B' history-substring-search-down
+
+# ==========================================
+# Aliases y Comandos Globales (Vibe Coding)
+# ==========================================
+# Ayuda y estado
+alias help="vibe-help"
+alias ayuda="vibe-help"
+alias vibe-help="vibe-help"
+alias verify="vibe-verify"
+alias vibe-verify="vibe-verify"
+alias check="vibe-verify"
+alias welcome="vibe-welcome"
+alias vibe-welcome="vibe-welcome"
+alias bienvenida="vibe-welcome"
+
+# IAs y Despliegue
+alias c="claude"
+alias cx="codex"
+alias rw="railway"
+alias lg="lazygit"
+
+# Gestores de paquetes y ejecución rápida
+alias pn="pnpm"
+alias b="bun"
+alias dev="npm run dev"
+alias build="npm run build"
+
+# Herramientas modernas de terminal con iconos siempre visibles
+alias ls="eza --icons=always"
+alias ll="eza -la --icons=always"
+alias tree="eza --tree --icons=always"
+alias cat="bat --paging=never"
+
+# Banner Vibe Coder Next dentro de Tmux
+if [ -t 0 ] && [ -t 1 ] && [ -n "$TMUX" ] && [ -z "$VIBE_BANNER_SHOWN" ]; then
+    export VIBE_BANNER_SHOWN=1
+    vibe-welcome
+fi

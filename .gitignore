@@ -1,0 +1,26 @@
+# Archivos de entorno y credenciales
+.env
+.env.local
+.vibe-config/
+
+# Historial de comandos del proyecto
+.bash_history
+.zsh_history
+
+# Dependencias
+node_modules/
+dist/
+build/
+.next/
+__pycache__/
+*.pyc
+.venv/
+env/
+
+# Logs
+*.log
+npm-debug.log*
+
+# Sistema operativo
+.DS_Store
+Thumbs.db

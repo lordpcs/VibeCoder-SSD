@@ -1,0 +1,11 @@
+.git
+.env
+.vibe-config
+.bash_history
+.zsh_history
+node_modules
+npm-debug.log
+.DS_Store
+dist
+build
+.next

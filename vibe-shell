@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+
+# Asegurar archivos de configuración de tmux
+if [ -f "/workspace/.tmux.conf" ]; then
+    cp /workspace/.tmux.conf /home/node/.tmux.conf 2>/dev/null || true
+elif [ ! -f "/home/node/.tmux.conf" ] && [ -f "/usr/local/etc/tmux.conf" ]; then
+    cp /usr/local/etc/tmux.conf /home/node/.tmux.conf 2>/dev/null || true
+fi
+
+if [ -f "/workspace/.tmux.conf.local" ]; then
+    cp /workspace/.tmux.conf.local /home/node/.tmux.conf.local 2>/dev/null || true
+elif [ ! -f "/home/node/.tmux.conf.local" ] && [ -f "/usr/local/etc/tmux.conf.local" ]; then
+    cp /usr/local/etc/tmux.conf.local /home/node/.tmux.conf.local 2>/dev/null || true
+fi
+
+# Si no estamos dentro de tmux, iniciar o reconectar sesión de tmux directamente
+if [ -z "$TMUX" ]; then
+    exec tmux -f /home/node/.tmux.conf new-session -A -s vibe
+else
+    exec /bin/zsh "$@"
+fi

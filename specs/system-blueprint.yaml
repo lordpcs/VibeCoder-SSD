@@ -1,0 +1,86 @@
+# ==============================================================================
+# VIBE CODER SDD ARCHITECTURE BLUEPRINT
+# Authoritative System-Driven Development Specification
+# ==============================================================================
+version: "1.0.0"
+project:
+  name: "Proyecto-Coder Next"
+  description: "Hybrid Vibe Coding & System-Driven Development (SDD) Platform with Agentic Orchestration"
+  owner: "Vibe Coder Team"
+  repository: "https://github.com/vibe-coder/proyecto-coder"
+
+architecture:
+  paradigm: "Hybrid SDD + Vibe Coding"
+  tagline: "Spec on the Trunk, Vibe on the Leaves"
+  execution_environment: "Docker Containerized Linux (Debian Bookworm) + Multi-Platform Host"
+  ports:
+    orchestrator_dashboard: 4040
+    nextjs_react: 3000
+    vite_frontend: 5173
+    fastapi_backend: 8000
+    general_http: 8080
+
+components:
+  - id: "sdd-spec-engine"
+    name: "System-Driven Development (SDD) Specification Engine"
+    path: "specs/"
+    type: "governance"
+    description: "Maintains authoritative contracts, JSON schemas, architectural invariants, and task manifests."
+    invariants:
+      - "All contract schemas must validate against OpenAPI 3.1 or JSONSchema Draft 2020-12."
+      - "No breaking API changes may be committed without updating version and migration plan."
+
+  - id: "agentic-orchestrator"
+    name: "Agentic Orchestrator Engine"
+    path: "orchestrator/backend/"
+    type: "service"
+    runtime: "Python 3 (FastAPI + Pydantic + AsyncIO)"
+    port: 4040
+    description: "Supervises AI coding agents, compiles SDD context into structured prompts, manages PTYs, and executes closed-loop verification."
+    dependencies:
+      - "sdd-spec-engine"
+
+  - id: "mission-control-dashboard"
+    name: "Mission Control Web Dashboard"
+    path: "orchestrator/dashboard/"
+    type: "frontend"
+    runtime: "React + Vite + Tailwind CSS + xterm.js"
+    description: "Real-time operations console providing visual spec exploration, mission dispatching, and live terminal streaming."
+    dependencies:
+      - "agentic-orchestrator"
+
+  - id: "vibe-container-sandbox"
+    name: "Vibe Coder Container Sandbox"
+    path: "Dockerfile"
+    type: "infrastructure"
+    description: "Containerized development runtime with 13 preconfigured CLI tools, Zsh, and Tmux."
+
+agent_profiles:
+  - id: "claude-code"
+    cli_command: "claude"
+    provider: "Anthropic"
+    strengths: ["Complex refactoring", "Large codebase traversal", "Strict SDD contract compliance"]
+    env_key: "ANTHROPIC_API_KEY"
+
+  - id: "codex"
+    cli_command: "codex"
+    provider: "OpenAI"
+    strengths: ["Rapid code generation", "Algorithmic synthesis", "Unit test scaffolding"]
+    env_key: "OPENAI_API_KEY"
+
+  - id: "autonomous-subagent"
+    cli_command: "python -m orchestrator.backend.app.runners.subagent_runner"
+    provider: "Native"
+    strengths: ["Task decomposition", "Self-healing verification loops", "Schema linting"]
+
+verification_gates:
+  pre_flight:
+    - name: "SDD Blueprint & Schema Lint"
+      command: "python bin/sdd.py lint"
+    - name: "Environment & Toolchain Check"
+      command: "./verify.sh"
+  post_task:
+    - name: "Automated Contract Invariant Test"
+      command: "python bin/sdd.py verify-invariants"
+    - name: "Project Test Suite"
+      command: "npm test --if-present"

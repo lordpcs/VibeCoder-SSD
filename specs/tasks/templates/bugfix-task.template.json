@@ -1,0 +1,24 @@
+{
+  "task_id": "task_YYYYMMDD_bugfix_slug",
+  "title": "Fix: Short summary of bug or regression",
+  "intent_vibe": "Describe what is breaking, expected behavior, and reproduction steps.",
+  "target_component": "id-from-system-blueprint",
+  "target_spec": "specs/invariants/system-invariants.yaml",
+  "affected_files": [
+    "src/**/*"
+  ],
+  "assigned_agent": "claude-code",
+  "constraints": {
+    "max_iterations": 2,
+    "strict_types": true,
+    "preserve_tests": true,
+    "timeout_seconds": 180
+  },
+  "acceptance_criteria": [
+    "Bug reproduction test is written and now passes",
+    "No existing tests broken"
+  ],
+  "verification_commands": [
+    "npm test --if-present"
+  ]
+}

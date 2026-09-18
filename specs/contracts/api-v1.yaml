@@ -1,0 +1,111 @@
+openapi: 3.1.0
+info:
+  title: "Agentic Orchestrator API"
+  version: "1.0.0"
+  description: "REST and WebSocket API for dispatching structured SDD instructions, supervising agents, and querying system telemetry."
+
+paths:
+  /api/health:
+    get:
+      summary: "System and toolchain health status"
+      responses:
+        "200":
+          description: "System health check"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status: { type: string, example: "ok" }
+                  timestamp: { type: string }
+                  container: { type: object }
+                  tools: { type: object }
+
+  /api/specs/blueprint:
+    get:
+      summary: "Retrieve authoritative system blueprint"
+      responses:
+        "200":
+          description: "Parsed YAML blueprint"
+
+  /api/specs/validate:
+    post:
+      summary: "Validate all SDD specifications and contracts"
+      responses:
+        "200":
+          description: "Validation results"
+
+  /api/specs/compile-prompt:
+    post:
+      summary: "Compile user vibe and target spec into a structured agent prompt"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: ["intent_vibe", "target_component"]
+              properties:
+                intent_vibe: { type: string }
+                target_component: { type: string }
+                target_spec: { type: string }
+                assigned_agent: { type: string }
+      responses:
+        "200":
+          description: "Compiled structured prompt and synthesized task manifest"
+
+  /api/tasks:
+    get:
+      summary: "List all active and historical tasks"
+      responses:
+        "200":
+          description: "List of tasks"
+    post:
+      summary: "Dispatch a new task to an agent"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "./task-schema.json"
+      responses:
+        "202":
+          description: "Task accepted and queued"
+
+  /api/tasks/{task_id}:
+    get:
+      summary: "Get status, logs, and verification results of a specific task"
+      parameters:
+        - name: task_id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: "Task details"
+        "404":
+          description: "Task not found"
+
+  /api/tasks/{task_id}/cancel:
+    post:
+      summary: "Cancel a running task"
+      parameters:
+        - name: task_id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: "Cancellation signal dispatched"
+
+  /api/tasks/{task_id}/verify:
+    post:
+      summary: "Manually trigger post-task SDD verification gates"
+      parameters:
+        - name: task_id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: "Verification results"

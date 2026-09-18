@@ -1,0 +1,123 @@
+#!/usr/bin/env bash
+# ==============================================================================
+# VIBE CLI - Lanza el entorno Vibe Coder en cualquier carpeta de tu Mac / Linux
+# ==============================================================================
+
+set -e
+
+IMAGE_NAME="antigravity-vibe-coder:latest"
+TARGET_DIR="$(pwd)"
+
+# 1. Comprobar que Docker esté activo
+if ! docker info >/dev/null 2>&1; then
+    echo -e "\033[1;31m❌ Error: Docker no se está ejecutando.\033[0m"
+    echo "Abre Docker Desktop en tu máquina e intenta nuevamente."
+    exit 1
+fi
+
+# 2. Taggear imagen como vibe-coder:latest si no existe
+docker tag "$IMAGE_NAME" vibe-coder:latest 2>/dev/null || true
+
+# 3. Detectar si la terminal es interactiva (TTY)
+DOCKER_TTY=""
+if [ -t 0 ] && [ -t 1 ]; then
+    DOCKER_TTY="-it"
+else
+    DOCKER_TTY="-i"
+fi
+
+# 4. Montar directorios de credenciales compartidas desde ~/ del host
+VOLUMES=(
+    -v "$TARGET_DIR:/workspace"
+    -v "$HOME/.config/gh:/home/node/.config/gh"
+    -v "$HOME/.railway:/home/node/.railway"
+    -v "$HOME/.claude:/home/node/.claude"
+    -v "$HOME/.codex:/home/node/.codex"
+)
+
+# Montar .claude.json si existe en ~/
+if [ -f "$HOME/.claude.json" ]; then
+    VOLUMES+=(-v "$HOME/.claude.json:/home/node/.claude.json")
+fi
+
+# 5. Variables de entorno globales
+ENV_VARS=(
+    -e "LANG=C.UTF-8"
+    -e "LC_ALL=C.UTF-8"
+    -e "HISTFILE=/workspace/.zsh_history"
+)
+
+# Cargar .env local si existe en la carpeta actual
+if [ -f "$TARGET_DIR/.env" ]; then
+    ENV_VARS+=(--env-file "$TARGET_DIR/.env")
+fi
+
+# 6. Comandos rápidos integrados
+case "$1" in
+    help|--help|-h|ayuda)
+        exec docker run --rm $DOCKER_TTY \
+            -w /workspace \
+            "${VOLUMES[@]}" \
+            "${ENV_VARS[@]}" \
+            "$IMAGE_NAME" \
+            /usr/local/bin/vibe-help
+        ;;
+    verify|check|--verify)
+        exec docker run --rm $DOCKER_TTY \
+            -w /workspace \
+            "${VOLUMES[@]}" \
+            "${ENV_VARS[@]}" \
+            "$IMAGE_NAME" \
+            /usr/local/bin/vibe-verify
+        ;;
+    welcome|bienvenida|banner)
+        exec docker run --rm $DOCKER_TTY \
+            -w /workspace \
+            "${VOLUMES[@]}" \
+            "${ENV_VARS[@]}" \
+            "$IMAGE_NAME" \
+            /usr/local/bin/vibe-welcome
+        ;;
+    dashboard|--dashboard|ui|gui)
+        echo -e "\033[1;36m🌐 Iniciando Orquestador Agéntico y Dashboard Web...\033[0m"
+        echo -e "\033[1;32m🔗 Accede en: http://localhost:4040\033[0m"
+        exec docker run --rm $DOCKER_TTY \
+            -w /workspace \
+            -p 4040:4040 \
+            "${VOLUMES[@]}" \
+            "${ENV_VARS[@]}" \
+            "$IMAGE_NAME" \
+            /usr/local/bin/vibe-orchestrator
+        ;;
+    sdd)
+        shift
+        exec docker run --rm $DOCKER_TTY \
+            -w /workspace \
+            "${VOLUMES[@]}" \
+            "${ENV_VARS[@]}" \
+            "$IMAGE_NAME" \
+            /usr/local/bin/sdd "$@"
+        ;;
+esac
+
+# 7. Ejecución: Si se pasan comandos específicos o modo interactivo
+if [ "$#" -gt 0 ]; then
+    exec docker run --rm $DOCKER_TTY \
+        -w /workspace \
+        "${VOLUMES[@]}" \
+        "${ENV_VARS[@]}" \
+        "$IMAGE_NAME" \
+        "$@"
+else
+    exec docker run --rm $DOCKER_TTY \
+        -w /workspace \
+        -p 4040:4040 \
+        -p 3000:3000 \
+        -p 5173:5173 \
+        -p 8000:8000 \
+        -p 8080:8080 \
+        "${VOLUMES[@]}" \
+        "${ENV_VARS[@]}" \
+        "$IMAGE_NAME" \
+        /usr/local/bin/vibe-shell
+fi

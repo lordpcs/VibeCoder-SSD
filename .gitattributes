@@ -1,0 +1,13 @@
+# Normalizar saltos de línea para compatibilidad multiplataforma (Windows, Linux, macOS)
+* text=auto
+
+# Forzar saltos de línea LF en scripts y configuraciones de Linux
+*.sh text eol=lf
+Dockerfile text eol=lf
+Makefile text eol=lf
+.tmux.conf text eol=lf
+.zshrc.template text eol=lf
+vibe-shell text eol=lf
+.dockerignore text eol=lf
+.gitignore text eol=lf
+docker-compose.yml text eol=lf
